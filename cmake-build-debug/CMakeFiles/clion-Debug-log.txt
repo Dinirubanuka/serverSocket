@@ -1,0 +1,4 @@
+"/Users/dinirubanuka/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/233.14015.92/CLion.app/Contents/bin/cmake/mac/aarch64/bin/cmake" -DCMAKE_BUILD_TYPE=Debug "-DCMAKE_MAKE_PROGRAM=/Users/dinirubanuka/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/233.14015.92/CLion.app/Contents/bin/ninja/mac/aarch64/ninja" -G Ninja -S /Users/dinirubanuka/Documents/Serversocket -B /Users/dinirubanuka/Documents/Serversocket/cmake-build-debug
+-- Configuring done (0.0s)
+-- Generating done (0.0s)
+-- Build files have been written to: /Users/dinirubanuka/Documents/Serversocket/cmake-build-debug

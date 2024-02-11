@@ -1,0 +1,75 @@
+#include "SocketUtil.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
+int main() {
+    int serverSocketFD = CreateTCPIpv4Socket();
+    struct sockaddr_in *address = CreateIPv4Address("", 3000);
+
+    int result = bind(serverSocketFD, (struct sockaddr *)address, sizeof(*address));
+
+    if (result == 0) {
+        printf("Socket was bound successfully\n");
+    } else {
+        perror("Error connecting to server");
+        exit(1);
+    }
+
+    int listenResult = listen(serverSocketFD, 10); // Willing to accept incoming connections 10.
+
+    struct sockaddr_in clientAddress;
+    socklen_t clientAddressSize = sizeof(clientAddress);
+    int clientSocketFD = accept(serverSocketFD, (struct sockaddr *)&clientAddress, &clientAddressSize);
+
+    char buffer[1024];
+    int bytesRead = recv(clientSocketFD, buffer, sizeof(buffer), 0);
+
+    if (bytesRead <= 0) {
+        perror("Error receiving data");
+        close(clientSocketFD);
+        shutdown(serverSocketFD, SHUT_RDWR);
+        exit(1);
+    }
+
+    // Parse the request to determine the requested file path
+    char requestType[10];
+    char filePath[255];
+    sscanf(buffer, "%s %s", requestType, filePath);
+
+    // Check if the requested file is a PHP script
+    if (strstr(filePath, ".php") != NULL) {
+        FILE *phpOutput;
+        char phpCommand[255];
+
+        // Execute the PHP script using the PHP interpreter and capture its output
+        snprintf(phpCommand, sizeof(phpCommand), "php -f %s", filePath);
+        phpOutput = popen(phpCommand, "r");
+
+        if (phpOutput == NULL) {
+            perror("Error executing PHP script");
+            close(clientSocketFD);
+            shutdown(serverSocketFD, SHUT_RDWR);
+            exit(1);
+        }
+
+        // Send the PHP script's output to the client
+        while (fgets(buffer, sizeof(buffer), phpOutput) != NULL) {
+            if (write(clientSocketFD, buffer, strlen(buffer)) == -1) {
+                perror("Error sending PHP output to client");
+                break;
+            }
+        }
+
+        pclose(phpOutput);
+    } else {
+        // Serve static files (e.g., HTML, CSS, images) here
+        // You can open and send the contents of the file to the client as appropriate
+        // Use appropriate content types for different file types
+    }
+
+    close(clientSocketFD);
+    shutdown(serverSocketFD, SHUT_RDWR);
+    return 0;
+}

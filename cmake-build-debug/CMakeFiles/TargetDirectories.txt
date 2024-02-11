@@ -1,0 +1,3 @@
+/Users/dinirubanuka/Documents/Serversocket/cmake-build-debug/CMakeFiles/Serversocket.dir
+/Users/dinirubanuka/Documents/Serversocket/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/dinirubanuka/Documents/Serversocket/cmake-build-debug/CMakeFiles/rebuild_cache.dir
